@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.Selection;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -302,7 +303,10 @@ public class MessageActivity extends TTBaseActivity
         imServiceConnector.disconnect(this);
         EventBus.getDefault().unregister(this);
         adapter.clearItem();
-        albumList.clear();
+        if(albumList!=null)
+        {
+            albumList.clear();
+        }
         sensorManager.unregisterListener(this, sensor);
         ImageMessage.clearImageMessageList();
         unregisterReceiver(receiver);
@@ -865,21 +869,28 @@ public class MessageActivity extends TTBaseActivity
             }
             break;
             case R.id.take_photo_btn: {
-                if (albumList.size() < 1) {
-                    Toast.makeText(MessageActivity.this,
-                            getResources().getString(R.string.not_found_album), Toast.LENGTH_LONG)
-                            .show();
-                    return;
-                }
-                // 选择图片的时候要将session的整个回话 传过来
-                Intent intent = new Intent(MessageActivity.this, PickPhotoActivity.class);
-                intent.putExtra(IntentConstant.KEY_SESSION_KEY, currentSessionKey);
-                startActivityForResult(intent, SysConstant.ALBUM_BACK_DATA);
+                if(albumList!=null)
+                {
+                    if (albumList.size() < 1) {
+                        Toast.makeText(MessageActivity.this,
+                                getResources().getString(R.string.not_found_album), Toast.LENGTH_LONG)
+                                .show();
+                        return;
+                    }
+                    // 选择图片的时候要将session的整个回话 传过来
+                    Intent intent = new Intent(MessageActivity.this, PickPhotoActivity.class);
+                    intent.putExtra(IntentConstant.KEY_SESSION_KEY, currentSessionKey);
+                    startActivityForResult(intent, SysConstant.ALBUM_BACK_DATA);
 
-                MessageActivity.this.overridePendingTransition(R.anim.tt_album_enter, R.anim.tt_stay);
-                //addOthersPanelView.setVisibility(View.GONE);
-                messageEdt.clearFocus();//切记清除焦点
-                scrollToBottomListItem();
+                    MessageActivity.this.overridePendingTransition(R.anim.tt_album_enter, R.anim.tt_stay);
+                    //addOthersPanelView.setVisibility(View.GONE);
+                    messageEdt.clearFocus();//切记清除焦点
+                    scrollToBottomListItem();
+                }
+                else
+                {
+                    Toast.makeText(this,"请检查SD卡是否存在",Toast.LENGTH_LONG).show();
+                }
             }
             break;
             case R.id.take_camera_btn: {
@@ -887,11 +898,18 @@ public class MessageActivity extends TTBaseActivity
                 takePhotoSavePath = CommonUtil.getImageSavePath(String.valueOf(System
                         .currentTimeMillis())
                         + ".jpg");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(takePhotoSavePath)));
-                startActivityForResult(intent, SysConstant.CAMERA_WITH_DATA);
-                //addOthersPanelView.setVisibility(View.GONE);
-                messageEdt.clearFocus();//切记清除焦点
-                scrollToBottomListItem();
+                if(!TextUtils.isEmpty(takePhotoSavePath))
+                {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(takePhotoSavePath)));
+                    startActivityForResult(intent, SysConstant.CAMERA_WITH_DATA);
+                    //addOthersPanelView.setVisibility(View.GONE);
+                    messageEdt.clearFocus();//切记清除焦点
+                    scrollToBottomListItem();
+                }
+                else
+                {
+                    Toast.makeText(this,"检查SD卡状态",Toast.LENGTH_LONG).show();
+                }
             }
             break;
             case R.id.show_emo_btn: {

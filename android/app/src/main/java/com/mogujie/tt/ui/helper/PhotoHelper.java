@@ -170,11 +170,23 @@ public class PhotoHelper {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePhotoSavePath = CommonUtil.getImageSavePath(String.valueOf(System
                 .currentTimeMillis()) + ".jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(new File(takePhotoSavePath)));
-        // intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-        ((MessageActivity) context).startActivityForResult(intent,
-                SysConstant.CAMERA_WITH_DATA);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+//                Uri.fromFile(new File(takePhotoSavePath)));
+//        // intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+//        ((MessageActivity) context).startActivityForResult(intent,
+//                SysConstant.CAMERA_WITH_DATA);
+        if(!TextUtils.isEmpty(takePhotoSavePath))
+        {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    Uri.fromFile(new File(takePhotoSavePath)));
+            // intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+            ((MessageActivity) context).startActivityForResult(intent,
+                    SysConstant.CAMERA_WITH_DATA);
+        }
+        else
+        {
+            Toast.makeText(context,"检查SD卡状态",Toast.LENGTH_LONG).show();
+        }
     }
 
     /**

@@ -1,11 +1,9 @@
-
 package com.mogujie.tt.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -14,9 +12,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
-import com.mogujie.tt.R;
 import com.mogujie.tt.config.SysConstant;
 
 import java.io.BufferedReader;
@@ -28,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommonUtil {
+    public static String fileDir=null;
     private  static Logger logger = Logger.getLogger(CommonUtil.class);
     /**
      * @Description 判断是否是顶部activity
@@ -55,7 +52,6 @@ public class CommonUtil {
                 android.os.Environment.MEDIA_MOUNTED)) {
             return true;
         }
-
         return false;
     }
 
@@ -130,7 +126,7 @@ public class CommonUtil {
 
     /**
      * 将byte数组转换为int数据
-     * 
+     *
      * @param b 字节数组
      * @return 生成的int数据
      */
@@ -161,37 +157,16 @@ public class CommonUtil {
 
 
     public static String getImageSavePath(String fileName) {
-
         if (TextUtils.isEmpty(fileName)) {
             return null;
         }
-
-        final File folder = new File(Environment.getExternalStorageDirectory()
-                .getAbsolutePath()
-                + File.separator
-                + "MGJ-IM"
-                + File.separator
-                + "images");
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        return folder.getAbsolutePath() + File.separator + fileName;
+        return getSavePath(SysConstant.FILE_SAVE_TYPE_IMAGE)+fileName;
     }
 
     public static File getImageSavePath() {
-        final File folder = new File(Environment.getExternalStorageDirectory()
-                .getAbsolutePath()
-                + File.separator
-                + "MGJ-IM"
-                + File.separator
-                + "images");
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-        return folder;
+        final String strPath = getSavePath(SysConstant.FILE_SAVE_TYPE_IMAGE);
+        return new File(strPath);
     }
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -231,7 +206,7 @@ public class CommonUtil {
     /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
-     * 
+     *
      * @param context The context.
      * @param uri The Uri to query.
      * @param selection (Optional) Filter used in the query.
@@ -239,7 +214,7 @@ public class CommonUtil {
      * @return The value of the _data column, which is typically a file path.
      */
     public static String getDataColumn(Context context, Uri uri,
-            String selection, String[] selectionArgs) {
+                                       String selection, String[] selectionArgs) {
 
         Cursor cursor = null;
         final String column = "_data";
@@ -328,28 +303,32 @@ public class CommonUtil {
         String path = getSavePath(SysConstant.FILE_SAVE_TYPE_AUDIO) + userId
                 + "_" + String.valueOf(System.currentTimeMillis())
                 + ".spx";
-        File file = new File(path);
-        File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
         return path;
     }
 
     public static String getSavePath(int type) {
-        String path;
-        String floder = (type == SysConstant.FILE_SAVE_TYPE_IMAGE) ? "images"
-                : "audio";
+        StringBuilder sb = new StringBuilder();
         if (CommonUtil.checkSDCard()) {
-            path = Environment.getExternalStorageDirectory().toString()
-                    + File.separator + "MGJ-IM" + File.separator + floder
-                    + File.separator;
-
+            sb.append(Environment.getExternalStorageDirectory().toString());
+            sb.append(File.separator);
+            sb.append("MGJ-IM");
+            //注意：如果再多一层文件夹，文件夹将创建失败
+            sb.append(File.separator);
+            sb.append((type == SysConstant.FILE_SAVE_TYPE_IMAGE) ? "images" : "audio");
+            sb.append(File.separator);
         } else {
-            path = Environment.getDataDirectory().toString() + File.separator
-                    + "MGJ-IM" + File.separator + floder + File.separator;
+            sb.append(fileDir);
+            //注意：如果再多一层文件夹，文件夹将创建失败
+            sb.append(File.separator);
+            sb.append((type == SysConstant.FILE_SAVE_TYPE_IMAGE) ? "images" : "audio");
+            sb.append(File.separator);
         }
-        return path;
+        File filePath = new File(sb.toString());
+        if(!filePath.exists())
+        {
+            filePath.mkdir();
+        }
+        return sb.toString();
     }
 
     /**
@@ -405,8 +384,8 @@ public class CommonUtil {
 
     public static boolean gifCheck(String url)
     {
-       boolean isGif = !TextUtils.isEmpty(url) && url.equals(CommonUtil.matchUrl(url)) && url.toLowerCase().substring(url.length() - 4, url.length()).equals(".gif");
-       return isGif;
+        boolean isGif = !TextUtils.isEmpty(url) && url.equals(CommonUtil.matchUrl(url)) && url.toLowerCase().substring(url.length() - 4, url.length()).equals(".gif");
+        return isGif;
     }
 
 }

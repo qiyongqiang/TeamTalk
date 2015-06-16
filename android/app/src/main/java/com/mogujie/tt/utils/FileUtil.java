@@ -1,19 +1,8 @@
-
 package com.mogujie.tt.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-
-import com.mogujie.tt.config.SysConstant;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.DiskLruCache;
-import com.squareup.okhttp.internal.Util;
-
-import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -22,17 +11,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 
 public class FileUtil
 {
@@ -46,7 +31,7 @@ public class FileUtil
 
     /**
      * 创建文件夹
-     * 
+     *
      * @throws IOException
      */
     public static File createFileInSDCard(String fileName, String dir)
@@ -347,7 +332,7 @@ public class FileUtil
     }
 
     public static File save2File(String savePath, String saveName,
-            String crashReport) {
+                                 String crashReport) {
         try {
             File dir = new File(savePath);
             if (!dir.exists())
@@ -380,23 +365,6 @@ public class FileUtil
             return null;
         }
     }
-
-    public static String saveGifResourceToFile(byte[] content) {
-        try {
-            String gifSavePath = CommonUtil.getSavePath(SysConstant.FILE_SAVE_TYPE_IMAGE);
-            File file = new File(gifSavePath);
-            FileOutputStream fops = new FileOutputStream(file);
-            fops.write(content);
-            fops.flush();
-            fops.close();
-            return gifSavePath;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
 
     @SuppressWarnings("unused")
     private static Bitmap getBitmap(InputStream fs) {

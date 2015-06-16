@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -19,15 +18,15 @@ import android.widget.Toast;
 
 import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.R;
-import com.mogujie.tt.config.SysConstant;
-import com.mogujie.tt.utils.IMUIHelper;
 import com.mogujie.tt.imservice.event.UserInfoEvent;
 import com.mogujie.tt.imservice.manager.IMLoginManager;
 import com.mogujie.tt.imservice.service.IMService;
-import com.mogujie.tt.ui.activity.SettingActivity;
 import com.mogujie.tt.imservice.support.IMServiceConnector;
-import com.mogujie.tt.utils.FileUtil;
+import com.mogujie.tt.ui.activity.SettingActivity;
 import com.mogujie.tt.ui.widget.IMBaseImageView;
+import com.mogujie.tt.utils.CommonUtil;
+import com.mogujie.tt.utils.FileUtil;
+import com.mogujie.tt.utils.IMUIHelper;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
@@ -113,8 +112,7 @@ public class MyFragment extends MainFragment {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                FileUtil.deleteHistoryFiles(new File(Environment.getExternalStorageDirectory().toString()
-                                        + File.separator + "MGJ-IM"+File.separator),System.currentTimeMillis());
+                                FileUtil.deleteHistoryFiles(CommonUtil.getImageSavePath(), System.currentTimeMillis());
                                 Toast toast = Toast.makeText(getActivity(),R.string.thumb_remove_finish,Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER,0,0);
                                 toast.show();

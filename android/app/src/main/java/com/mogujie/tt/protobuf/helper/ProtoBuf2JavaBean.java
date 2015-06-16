@@ -1,12 +1,14 @@
 package com.mogujie.tt.protobuf.helper;
 
+import android.text.TextUtils;
+
 import com.google.protobuf.ByteString;
 import com.mogujie.tt.DB.entity.DepartmentEntity;
-import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.DB.entity.GroupEntity;
 import com.mogujie.tt.DB.entity.MessageEntity;
 import com.mogujie.tt.DB.entity.SessionEntity;
 import com.mogujie.tt.DB.entity.UserEntity;
+import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.config.MessageConstant;
 import com.mogujie.tt.imservice.entity.AudioMessage;
 import com.mogujie.tt.imservice.entity.MsgAnalyzeEngine;
@@ -59,7 +61,20 @@ public class ProtoBuf2JavaBean {
         userEntity.setDepartmentId(userInfo.getDepartmentId());
         userEntity.setEmail(userInfo.getEmail());
         userEntity.setGender(userInfo.getUserGender());
-        userEntity.setMainName(userInfo.getUserNickName());
+//        userEntity.setMainName(userInfo.getUserNickName());
+        String nickName = userInfo.getUserNickName();
+        if(TextUtils.isEmpty(nickName))
+        {
+            if(!TextUtils.isEmpty(userInfo.getUserRealName()))
+            {
+                nickName = userInfo.getUserRealName();
+            }
+            else
+            {
+                nickName = userInfo.getUserId()+"";
+            }
+        }
+        userEntity.setMainName(nickName);
         userEntity.setPhone(userInfo.getUserTel());
         userEntity.setPinyinName(userInfo.getUserDomain());
         userEntity.setRealName(userInfo.getUserRealName());

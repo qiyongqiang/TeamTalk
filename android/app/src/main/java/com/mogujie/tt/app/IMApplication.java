@@ -2,7 +2,9 @@ package com.mogujie.tt.app;
 
 import android.app.Application;
 import android.content.Intent;
+
 import com.mogujie.tt.imservice.service.IMService;
+import com.mogujie.tt.utils.CommonUtil;
 import com.mogujie.tt.utils.ImageLoaderUtil;
 import com.mogujie.tt.utils.Logger;
 
@@ -23,6 +25,7 @@ public class IMApplication extends Application {
 		logger.i("Application starts");
 		startIMService();
 		ImageLoaderUtil.initImageLoaderConfig(getApplicationContext());
+		CommonUtil.fileDir = this.getFilesDir().toString();
 	}
 
 	private void startIMService() {
