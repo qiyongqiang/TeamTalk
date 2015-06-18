@@ -300,7 +300,10 @@ public class CommonUtil {
     }
 
     public static String getAudioSavePath(int userId) {
-        String path = getSavePath(SysConstant.FILE_SAVE_TYPE_AUDIO) + userId
+//        String path = getSavePath(SysConstant.FILE_SAVE_TYPE_AUDIO) + userId
+//                + "_" + String.valueOf(System.currentTimeMillis())
+//                + ".spx";
+        String path = FileUtil.getAudioPath() + userId
                 + "_" + String.valueOf(System.currentTimeMillis())
                 + ".spx";
         return path;

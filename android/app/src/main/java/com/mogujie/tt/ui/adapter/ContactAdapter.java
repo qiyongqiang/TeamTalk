@@ -2,6 +2,7 @@ package com.mogujie.tt.ui.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 import com.mogujie.tt.DB.entity.GroupEntity;
 import com.mogujie.tt.DB.entity.UserEntity;
 import com.mogujie.tt.R;
-import com.mogujie.tt.config.DBConstant;
 import com.mogujie.tt.config.SysConstant;
 import com.mogujie.tt.imservice.service.IMService;
 import com.mogujie.tt.ui.widget.IMBaseImageView;
@@ -272,7 +272,7 @@ public class ContactAdapter extends BaseAdapter implements
         if (position == groupSize) {
             userHolder.sectionView.setVisibility(View.VISIBLE);
             userHolder.sectionView.setText(sectionName);
-
+            Log.d("GROUP",sectionName);
             //分栏已经显示，最上面的分割线不用显示
             userHolder.divider.setVisibility(View.GONE);
         }else{
@@ -319,6 +319,7 @@ public class ContactAdapter extends BaseAdapter implements
         }
 
         groupHolder.nameView.setText(groupEntity.getMainName());
+        Log.d("GROUP",groupEntity.getMainName());
         groupHolder.sectionView.setVisibility(View.GONE);
 
         // 分割线的处理【位于控件的最上面】

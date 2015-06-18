@@ -24,7 +24,6 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.Selection;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -87,13 +86,16 @@ import com.mogujie.tt.ui.widget.EmoGridView.OnEmoGridViewItemClick;
 import com.mogujie.tt.ui.widget.MGProgressbar;
 import com.mogujie.tt.ui.widget.YayaEmoGridView;
 import com.mogujie.tt.utils.CommonUtil;
+import com.mogujie.tt.utils.FileUtil;
 import com.mogujie.tt.utils.IMUIHelper;
 import com.mogujie.tt.utils.Logger;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
@@ -894,22 +896,36 @@ public class MessageActivity extends TTBaseActivity
             }
             break;
             case R.id.take_camera_btn: {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                takePhotoSavePath = CommonUtil.getImageSavePath(String.valueOf(System
-                        .currentTimeMillis())
-                        + ".jpg");
-                if(!TextUtils.isEmpty(takePhotoSavePath))
-                {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(takePhotoSavePath)));
-                    startActivityForResult(intent, SysConstant.CAMERA_WITH_DATA);
-                    //addOthersPanelView.setVisibility(View.GONE);
-                    messageEdt.clearFocus();//切记清除焦点
-                    scrollToBottomListItem();
+                String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(System.currentTimeMillis()));
+                File outputImage = FileUtil.getImagePath(fileName + ".jpg", this);
+
+                // 图片的路径无法生成
+                if(outputImage == null){
+                    logger.e("take_camera_btn#outputImage is null");
+                    showToast(R.string.no_storage);
+                    return;
                 }
-                else
-                {
-                    Toast.makeText(this,"检查SD卡状态",Toast.LENGTH_LONG).show();
+
+                try {
+                    if(outputImage.exists()) {
+                        outputImage.delete();
+                    }
+                    outputImage.createNewFile();
+                } catch(Exception e) {
+                    logger.e("IO error");
+                    showToast(R.string.no_storage);
+                    return;
                 }
+
+                //将File对象转换为Uri并启动照相程序
+                takePhotoSavePath = Uri.fromFile(outputImage).getPath();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //照相
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outputImage));
+                startActivityForResult(intent, SysConstant.CAMERA_WITH_DATA);
+                //addOthersPanelView.setVisibility(View.GONE);
+                messageEdt.clearFocus();//切记清除焦点
+                scrollToBottomListItem();
             }
             break;
             case R.id.show_emo_btn: {

@@ -34,6 +34,9 @@
     <string name="choose_contact">选择联系人</string>
     <string name="switch_login_server">切换登陆服务器</string>
     <string name="switch_login_server_title">输入登陆服务器地址</string>
-    
+
+    //图片路径相关
+    <string name="dir">/trademobile</string>
+    <string name="img_dir">/img</string>
 
 </resources>

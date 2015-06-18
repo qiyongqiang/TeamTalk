@@ -1,8 +1,12 @@
 package com.mogujie.tt.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.text.TextUtils;
+
+import com.mogujie.tt.R;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class FileUtil
 {
@@ -465,5 +470,52 @@ public class FileUtil
             }
         }
         return filename;
+    }
+
+    public static File getImagePath(String name, Context mContext) {
+        String EXTERN_PATH = null;
+        String imagePath = mContext.getString(R.string.dir) + mContext.getString(R.string.img_dir) + "/";
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) == true) {
+            EXTERN_PATH = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + imagePath;
+        } else {
+            List<String> listPath = SDCardScanner.getExtSDCardPaths();
+            if(listPath !=null && listPath.size()>0){
+                EXTERN_PATH = listPath.get(0) + imagePath;
+            }
+        }
+
+        // yingmu add
+        if(TextUtils.isEmpty(EXTERN_PATH)){
+            return null;
+        }
+
+        File f = new File(EXTERN_PATH);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return new File(EXTERN_PATH + name);
+    }
+
+    public static String getAudioPath() {
+        String EXTERN_PATH = null;
+        String imagePath = "/trademobile/audio/";
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) == true) {
+            EXTERN_PATH = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + imagePath;
+        } else {
+            List<String> listPath = SDCardScanner.getExtSDCardPaths();
+            if(listPath !=null && listPath.size()>0){
+                EXTERN_PATH = listPath.get(0) + imagePath;
+            }
+        }
+        // yingmu add
+        if(TextUtils.isEmpty(EXTERN_PATH)){
+            return null;
+        }
+
+        File f = new File(EXTERN_PATH);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return EXTERN_PATH;
     }
 }
