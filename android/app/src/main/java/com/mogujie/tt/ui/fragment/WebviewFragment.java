@@ -1,16 +1,19 @@
 package com.mogujie.tt.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.mogujie.tt.R;
+import com.mogujie.tt.ui.activity.WebViewFragmentActivity;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class WebviewFragment extends MainFragment {
@@ -51,6 +54,7 @@ public class WebviewFragment extends MainFragment {
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setSupportMultipleWindows(true);
 //        webView.loadUrl(url);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
@@ -60,6 +64,52 @@ public class WebviewFragment extends MainFragment {
                 // The progress meter will automatically disappear when we reach 100%
 //                getActivity().setProgress(progress * 1000);
             }
+
+            /**
+             * >4.1
+             * @param uploadFile
+             * @param acceptType
+             * @param capture
+             */
+            public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String capture) {
+                WebViewFragmentActivity.mUploadMessage = uploadFile;
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                getActivity().startActivityForResult(
+                        Intent.createChooser(intent, "完成操作需要使用"),
+                        0);
+            }
+
+            /**
+             * 3.0+
+             * @param uploadFile
+             * @param acceptType
+             */
+            public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType) {
+                WebViewFragmentActivity.mUploadMessage = uploadFile;
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                getActivity().startActivityForResult(
+                        Intent.createChooser(intent, "完成操作需要使用"),
+                        0);
+            }
+
+            /**
+             * <3.0
+             * @param uploadFile
+             */
+            public void openFileChooser(ValueCallback<Uri> uploadFile) {
+                WebViewFragmentActivity.mUploadMessage = uploadFile;
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                getActivity().startActivityForResult(
+                        Intent.createChooser(intent, "完成操作需要使用"),
+                        0);
+            }
+
         });
         webView.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
@@ -108,4 +158,6 @@ public class WebviewFragment extends MainFragment {
             url = "http"+bUid;
         }
     }
+
+
 }
