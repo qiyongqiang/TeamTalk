@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -46,27 +47,34 @@ public class WebviewFragment extends MainFragment {
 		setTopLeftText(getResources().getString(R.string.top_left_back));
 
         WebView webView = (WebView) curView.findViewById(R.id.webView1);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(url);
+//        webView.loadUrl(url);
         webView.setVerticalScrollBarEnabled(false);
         webView.setHorizontalScrollBarEnabled(false);
-        webView.setWebViewClient(new WebViewClient() {
-
-			@Override
-			public void onPageFinished(WebView view, String url) {
-				setTopTitle(view.getTitle());
-                hideProgressBar();
-			}
-
-			@Override
-			public void onReceivedError(WebView view, int errorCode,
-					String description, String failingUrl) {
-				// TODO Auto-generated method stub
-				super.onReceivedError(view, errorCode, description, failingUrl);
-				hideProgressBar();
-			}
-        	
+        webView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                // Activities and WebViews measure progress with different scales.
+                // The progress meter will automatically disappear when we reach 100%
+//                getActivity().setProgress(progress * 1000);
+            }
         });
+        webView.setWebViewClient(new WebViewClient() {
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                hideProgressBar();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                setTopTitle(view.getTitle());
+                hideProgressBar();
+            }
+        });
+
+        webView.loadUrl(url);
     }
 
 	@Override
